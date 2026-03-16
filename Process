@@ -1,0 +1,18 @@
+import java.util.*;
+
+class Process {
+    int id;
+    int arrival;
+    int runtime;
+    int deadline;
+    int vruntime = 0;
+    int remaining;
+
+    Process(int id, int arrival, int runtime, int deadline) {
+        this.id = id;
+        this.arrival = arrival;
+        this.runtime = runtime;
+        this.deadline = deadline;
+        this.remaining = runtime;
+    }
+}

@@ -1,0 +1,86 @@
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.PriorityQueue;
+
+public class CFSScheduler {
+
+    public static void main(String[] args) {
+
+        int TOTAL_PROCESSES = 100;
+
+        List<Process> processes = generateProcesses(TOTAL_PROCESSES);
+
+        PriorityQueue<Process> readyQueue =
+                new PriorityQueue<>(Comparator.comparingInt(p -> p.vruntime));
+
+        int time = 0;
+        int completed = 0;
+
+        Map<Integer, Integer> completionTimes = new HashMap<>();
+
+        while (completed < TOTAL_PROCESSES) {
+
+            // add arriving processes
+            for (Process p : processes) {
+                if (p.arrival == time) {
+                    readyQueue.add(p);
+                }
+            }
+
+            if (!readyQueue.isEmpty()) {
+
+                Process current = readyQueue.poll();
+
+                current.remaining--;
+                current.vruntime++;
+
+                if (current.remaining == 0) {
+                    completionTimes.put(current.id, time + 1);
+                    completed++;
+                } else {
+                    readyQueue.add(current);
+                }
+            }
+
+            time++;
+        }
+
+        System.out.println("Process  Arrival  Runtime  Deadline  Completion");
+
+        for (Process p : processes) {
+            System.out.println(
+                    p.id + "\t" +
+                    p.arrival + "\t" +
+                    p.runtime + "\t" +
+                    p.deadline + "\t\t" +
+                    completionTimes.get(p.id));
+        }
+    }
+
+    public static List<Process> generateProcesses(int total) {
+
+        List<Process> list = new ArrayList<>();
+
+        int arrival = 0;
+
+        int[] runtimes = {5,10,15,20,25,30,35,40,45,50};
+        int[] deadlines = {10,20,30,40,50,60,70,80,90,100};
+
+        for (int i = 0; i < total; i++) {
+
+            int runtime = runtimes[i % 10];
+            int deadline = deadlines[i % 10];
+
+            if (i % 5 == 0 && i != 0) {
+                arrival += 5;
+            }
+
+            list.add(new Process(i, arrival, runtime, deadline));
+        }
+
+        return list;
+    }
+}
